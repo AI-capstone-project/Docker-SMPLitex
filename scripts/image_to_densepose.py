@@ -42,20 +42,20 @@ class RGB2DensePose:
 
             # checks if it's a valid file
             if os.path.isfile(current_filepath):
-                
+
                 image_filename, extension = os.path.splitext(current_filename)
-                
+
                 # if file is image file
                 if extension in ('.jpg','.JPG', '.png', '.PNG', '.jpeg', '.JPEG'):
-                    
+
                     densepose_image_filepath = os.path.join(densepose_image_directory, image_filename +  "_densepose.png")
-                    densepose_pkl_filepath = os.path.join(densepose_pkl_directory, image_filename + "_densepose.pkl") 
-                    
+                    densepose_pkl_filepath = os.path.join(densepose_pkl_directory, image_filename + "_densepose.pkl")
+
                     self.img2densepose(current_filepath, densepose_pkl_filepath, densepose_image_filepath)
 
     def img2densepose(self, input_image, output_pkl, output_image):
-        
-        os.system("python apply_net.py dump configs/densepose_rcnn_R_101_FPN_s1x.yaml https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_s1x/165712084/model_final_c6ab63.pkl " + input_image + " --output " + output_pkl + " -v")
+
+        os.system("python3 apply_net.py dump configs/densepose_rcnn_R_101_FPN_s1x.yaml https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_s1x/165712084/model_final_c6ab63.pkl " + input_image + " --output " + output_pkl + " -v")
 
         img          = Image.open(input_image)
         img_w ,img_h = img.size
@@ -97,12 +97,10 @@ if INPUT_IMAGE_PATH.endswith('/'):
     INPUT_IMAGE_PATH = INPUT_IMAGE_PATH[:-1]
 
 # Change path to your dir of detectron2/projects/DensePose
-os.chdir(os.path.join(DETECTRON_PATH,"projects/DensePose"))        
+os.chdir(os.path.join(DETECTRON_PATH,"projects/DensePose"))
 
 # Adds DensePose to PYTHONPATH
-sys.path.append(os.path.join(DETECTRON_PATH,"projects/DensePose")) 
+sys.path.append(os.path.join(DETECTRON_PATH,"projects/DensePose"))
 
 densepose = RGB2DensePose()
 densepose.folder2densepose(INPUT_IMAGE_PATH)
-
-
