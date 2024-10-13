@@ -7,26 +7,29 @@ RUN apt-get update && apt-get install -y \
     bzip2 \
     ca-certificates \
     sudo \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -s /bin/bash myuser && echo "myuser:myuser" | chpasswd && adduser myuser sudo
+
+# Download and install Miniconda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/Miniconda3-latest-Linux-x86_64.sh 
+RUN chmod +x /tmp/Miniconda3-latest-Linux-x86_64.sh 
+RUN /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda 
+RUN rm /tmp/Miniconda3-latest-Linux-x86_64.sh
+
+# Set environment variables for conda
+ENV PATH /opt/miniconda/bin:$PATH
+
+# Initialize conda
+RUN /opt/miniconda/bin/conda init bash
 
 # Switch to the non-root user
 USER myuser
 WORKDIR /home/myuser/SMPLitex
 
-# Download and install Miniconda
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda3-latest-Linux-x86_64.sh \
-    && bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda \
-    && rm Miniconda3-latest-Linux-x86_64.sh
-
-# Initialize conda
-RUN $HOME/miniconda/bin/conda init bash
-
-# Set environment variables for conda
-ENV PATH /home/myuser/miniconda/bin:$PATH
-
-RUN /bin/bash -c "source $HOME/miniconda/bin/activate && conda create -n myenv python=3.10 -y"
+# Create a conda environment
+RUN /bin/bash -c "source /opt/miniconda/bin/activate && conda create -n myenv python=3.10 -y"
 
 
 COPY . .
@@ -40,7 +43,7 @@ SHELL ["/bin/bash", "-c"]
 # Run a command to verify conda installation
 CMD ["bash"]
 
-RUN /bin/bash -c "source $HOME/miniconda/bin/activate myenv && \
+RUN /bin/bash -c "source /opt/miniconda/bin/activate myenv && \
     python3 -m ensurepip --upgrade && \
     pip install -r requirements.txt && \
     conda install -c fvcore -c iopath -c conda-forge fvcore iopath -y && \
@@ -52,14 +55,14 @@ RUN git clone https://github.com/facebookresearch/detectron2.git
 
 # install detectron2 and densepose
 WORKDIR /home/myuser/SMPLitex/scripts/detectron2
-RUN /bin/bash -c "source $HOME/miniconda/bin/activate myenv && pip install -e ."
-RUN /bin/bash -c "source $HOME/miniconda/bin/activate myenv && pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose"
+RUN /bin/bash -c "source /opt/miniconda/bin/activate myenv && pip install -e ."
+RUN /bin/bash -c "source /opt/miniconda/bin/activate myenv && pip install git+https://github.com/facebookresearch/detectron2@main#subdirectory=projects/DensePose"
 
 WORKDIR /home/myuser/SMPLitex/scripts
 # Install the necessary dependencies for the detectron2 library
 RUN apt-get update && apt-get install -y libgl1-mesa-glx
 RUN apt-get update && apt-get install -y libglib2.0-0
-RUN RUN /bin/bash -c "source $HOME/miniconda/bin/activate myenv && pip3 install av"
+RUN RUN /bin/bash -c "source /opt/miniconda/bin/activate myenv && pip3 install av"
 
 # Download the SemanticGuidedHumanMatting repository for computing the silhouette of the subject
 RUN git clone https://github.com/cxgincsu/SemanticGuidedHumanMatting.git
@@ -74,7 +77,7 @@ WORKDIR /app/scripts/
 
 # Download the stable-diffusion-webui repository for the web interface
 RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
-RUN /bin/bash -c "source $HOME/miniconda/bin/activate myenv && pip install webuiapi"
+RUN /bin/bash -c "source /opt/miniconda/bin/activate myenv && pip install webuiapi"
 
 # Add TCMalloc to the container for memory management
 RUN apt-get install libgoogle-perftools4 libtcmalloc-minimal4 -y
