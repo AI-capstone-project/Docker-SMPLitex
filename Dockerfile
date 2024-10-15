@@ -62,7 +62,6 @@ RUN apt-get update && apt-get install -y libglib2.0-0
 RUN RUN /bin/bash -c "source /opt/miniconda/bin/activate myenv && pip3 install av"
 
 # Download the SemanticGuidedHumanMatting repository for computing the silhouette of the subject
-RUN git clone https://github.com/cxgincsu/SemanticGuidedHumanMatting.git
 WORKDIR /app/scripts/SemanticGuidedHumanMatting
 RUN mkdir pretrained
 
