@@ -1,9 +1,0 @@
-[submodule "scripts/SemanticGuidedHumanMatting"]
-	path = scripts/SemanticGuidedHumanMatting
-	url = https://github.com/cxgincsu/SemanticGuidedHumanMatting.git
-[submodule "scripts/stable-diffusion-webui"]
-	path = scripts/stable-diffusion-webui
-	url = https://github.com/mix1009/sdwebuiapi.git
-[submodule "scripts/detectron2"]
-	path = scripts/detectron2
-	url = https://github.com/facebookresearch/detectron2.git
