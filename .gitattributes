@@ -1,1 +1,4 @@
 *.pth filter=lfs diff=lfs merge=lfs -text
+split.zip.00* filter=lfs diff=lfs merge=lfs -text
+*.ckpt filter=lfs diff=lfs merge=lfs -text
+SMPLitex-v1.0.ckpt.00* filter=lfs diff=lfs merge=lfs -text
