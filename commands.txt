@@ -1,0 +1,21 @@
+# run the docker image
+sudo docker run -it --rm --runtime=nvidia --gpus all my-app bash
+
+# Join in the docker container
+sudo docker exec -it <container-id> bash
+
+# find container Id
+sudo docker ps
+
+python image_to_densepose.py --detectron2 ./detectron2 --input_folder ./dummy_data/images
+
+python SemanticGuidedHumanMatting/test_image.py --images-dir ./dummy_data/images  --result-dir ./dummy_data/images-seg --pretrained-weight SemanticGuidedHumanMatting/pretrained/SGHM-ResNet50.pth
+
+python compute_partial_texturemap.py --input_folder ./dummy_data
+
+in a seperate terminal, run the following command to start the server
+./stable-diffusion-webui/webui.sh --disable-safe-unpickle --api --share
+
+python inpaint_with_A1111.py --partial_textures ./dummy_data/uv-textures  --masks ./dummy_data/uv-textures-masks --inpainted_textures ./dummy_data/uv-textures-inpainted
+
+python render_results.py --textures ./dummy_data/uv-textures-inpainted/

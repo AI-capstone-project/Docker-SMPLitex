@@ -16,7 +16,7 @@ class Render360:
             self.device = "cuda"
         elif torch.backends.mps.is_available():
             self.device = "mps"
-        else: 
+        else:
             self.device = "cpu"
 
         #   creates a SMPL instance, and samples it T pose
@@ -29,8 +29,8 @@ class Render360:
         self.body_pose[0,47] = -1.35   # for A pose
         self.body_pose[0,50] =  1.30   # for A pose
 
-        self.smpl_output = self.smpl( betas=self.betas, 
-                            body_pose=self.body_pose, 
+        self.smpl_output = self.smpl( betas=self.betas,
+                            body_pose=self.body_pose,
                             return_verts=True)
 
         self.verts = self.smpl_output.vertices[0]
@@ -58,11 +58,11 @@ class Render360:
                 with Image.open(current_texture_path) as image:
                     current_image_np = np.asarray(image.convert("RGB")).astype(np.float32)
 
-                render_360_gif(self.device, self.verts, 
-                        current_image_np, self.verts_uvs, 
-                        self.faces_uvs, self.faces_verts.verts_idx, 
+                render_360_gif(self.device, self.verts,
+                        current_image_np, self.verts_uvs,
+                        self.faces_uvs, self.faces_verts.verts_idx,
                         current_texture_path.replace(".png", "-360.gif"))
-                
+
 parser = argparse.ArgumentParser(description= 'Renders SMPL 360 gifs given input textures')
 parser.add_argument('--textures', type=str, help='Folder with textures', required=True)
 
