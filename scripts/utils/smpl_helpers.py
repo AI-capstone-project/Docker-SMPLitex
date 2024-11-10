@@ -83,7 +83,7 @@ def render_360_gif(
     rotation_offset = 10
     images_for_gif = []
 
-    for mesh_rot in np.arange(0, 360, rotation_offset):
+    for mesh_rot in np.arange(0, 2, rotation_offset):
         current_im = render_mesh_textured(
             device,
             verts,

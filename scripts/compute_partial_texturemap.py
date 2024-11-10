@@ -22,11 +22,11 @@ class RGB2Texture:
         dataset_mask_path = os.path.join(self.dataset_root_path, 'images-seg')
 
         if not os.path.exists(dataset_iuv_path):
-            print("ERROR: ", dataset_iuv_path, " does not exist")
+            print("ERROR1A: ", dataset_iuv_path, " does not exist")
             return
 
         if not os.path.exists(dataset_mask_path):
-            print("ERROR: ", dataset_mask_path, " does not exist")
+            print("ERROR1B: ", dataset_mask_path, " does not exist")
             return
 
         # output path for masked iuv
@@ -76,15 +76,15 @@ class RGB2Texture:
                                 
             
                 else:
-                    print(current_mask_path, 'does not exist')
+                    print(current_mask_path, 'does not exist B1')
             else:
-                print(current_iuv_path, 'does not exist')
+                print(current_iuv_path, 'does not exist B2')
 
 
     def generate_uv_texture(self):
     
         # paths
-        dataset_image_path = os.path.join(self.dataset_root_path, 'images')
+        dataset_image_path = os.path.join(self.dataset_root_path, 'images-stableviton')
         dataset_iuv_path = os.path.join(self.dataset_root_path, 'densepose-masked')
         
         # output path for UV textures
@@ -118,7 +118,10 @@ class RGB2Texture:
         for path in files:
             num_images += 1
             current_image_path = os.path.join(dataset_image_path, path)
-            current_iuv_path = os.path.join(dataset_iuv_path, path.replace(".jpg", "_densepose.png"))
+            if path.endswith(".jpg"):
+                current_iuv_path = os.path.join(dataset_iuv_path, path.replace(".jpg", "_densepose.png"))
+            else:
+                current_iuv_path = os.path.join(dataset_iuv_path, path.replace(".png", "_densepose.png"))
 
             # check if both image and iuv exists
             if os.path.isfile(current_image_path):
@@ -130,9 +133,9 @@ class RGB2Texture:
                     # print(current_iuv_path)
 
                 else:
-                    print(current_iuv_path, ' does not exist')
+                    print(current_iuv_path, ' does not exist C1')
             else:
-                print(current_image_path, ' does not exist')
+                print(current_image_path, ' does not exist C2')
 
         num_images = 0
 

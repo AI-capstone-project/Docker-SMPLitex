@@ -26,9 +26,13 @@ class Render360:
 
         self.body_pose = torch.zeros(1,69)
         self.betas = torch.zeros(1,10)
-        self.body_pose[0,47] = -1.35   # for A pose
-        self.body_pose[0,50] =  1.30   # for A pose
-
+        self.body_pose[0,47] = 0.35   # for A pose left hand
+        self.body_pose[0,50] = -0.35   # for A pose right hand
+        # self.body_pose[0,20] = -0.35
+        self.body_pose[0,2] = 0.35 # for A pose left leg
+        self.body_pose[0,5] = -0.35 # for A pose right leg
+        self.body_pose[0,4]= 0.35
+        self.body_pose[0,30]= 2.0
         self.smpl_output = self.smpl( betas=self.betas,
                             body_pose=self.body_pose,
                             return_verts=True)
@@ -62,6 +66,7 @@ class Render360:
                         current_image_np, self.verts_uvs,
                         self.faces_uvs, self.faces_verts.verts_idx,
                         current_texture_path.replace(".png", "-360.gif"))
+                break
 
 parser = argparse.ArgumentParser(description= 'Renders SMPL 360 gifs given input textures')
 parser.add_argument('--textures', type=str, help='Folder with textures', required=True)

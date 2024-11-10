@@ -82,3 +82,5 @@ urllib3==2.1.0
 uvtextureconverter==1.2.0
 yacs==0.1.8
 zipp==3.17.0
+fastapi[standard]>=0.113.0,<0.114.0
+pydantic>=2.7.0,<3.0.0
