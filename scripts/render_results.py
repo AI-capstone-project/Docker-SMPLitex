@@ -26,13 +26,17 @@ class Render360:
 
         self.body_pose = torch.zeros(1,69)
         self.betas = torch.zeros(1,10)
-        self.body_pose[0,47] = 0.35   # for A pose left hand
-        self.body_pose[0,50] = -0.35   # for A pose right hand
-        # self.body_pose[0,20] = -0.35
-        self.body_pose[0,2] = 0.35 # for A pose left leg
-        self.body_pose[0,5] = -0.35 # for A pose right leg
-        self.body_pose[0,4]= 0.35
-        self.body_pose[0,30]= 2.0
+        self.body_pose[0, 47] = -1.35  # Adjusts arm angle
+        self.body_pose[0, 50] =  1.30  # Adjusts opposite arm angle
+        self.body_pose[0, 4] =  0.10   # Slightly bends knees for a relaxed stance
+        self.body_pose[0, 5] = -0.10   # Balances the knee angle
+        self.body_pose[0, 23] = 0.05   # Slightly twists the torso for balance
+        self.body_pose[0, 26] = -0.05  # Counter-twist for the opposite side
+        self.body_pose[0, 35] = -0.10  # Slightly bends elbows
+        
+        # Optional: Adjust shoulders for natural positioning
+        self.body_pose[0, 44] =  0.05
+        self.body_pose[0, 47] = -0.05
         self.smpl_output = self.smpl( betas=self.betas,
                             body_pose=self.body_pose,
                             return_verts=True)
@@ -46,7 +50,7 @@ class Render360:
         self.verts_uvs = aux.verts_uvs[None, ...]        # (1, F, 3)
         self.faces_uvs = self.faces_verts.textures_idx[None, ...]   # (1, F, 3)
 
-    def render_textures(self, textures_folder):
+    def render_textures(self, textures_folder, output_dir):
 
         #   extract list of texture files
         if os.path.exists(textures_folder):
@@ -56,6 +60,7 @@ class Render360:
 
         for idx, current_file in enumerate(files):
             current_texture_path = os.path.join(textures_folder, current_file)
+            output_texture_path = os.path.join(output_dir, current_file)
             print('\nProcessing image ', current_texture_path)
 
             if ".jpg" in current_texture_path or ".png" in current_texture_path:
@@ -65,15 +70,17 @@ class Render360:
                 render_360_gif(self.device, self.verts,
                         current_image_np, self.verts_uvs,
                         self.faces_uvs, self.faces_verts.verts_idx,
-                        current_texture_path.replace(".png", "-360.gif"))
+                        output_texture_path.replace(".png", "-360.gif"))
                 break
 
 parser = argparse.ArgumentParser(description= 'Renders SMPL 360 gifs given input textures')
 parser.add_argument('--textures', type=str, help='Folder with textures', required=True)
+parser.add_argument('--resultDir', type=str, help='Output folder for 360 gifs', required=True)
 
 args = parser.parse_args()
 
 INPUT_FOLDER = args.textures
+OUTPUT_FOLDER = args.resultDir
 
 render = Render360()
-render.render_textures(INPUT_FOLDER)
+render.render_textures(INPUT_FOLDER, OUTPUT_FOLDER)

@@ -84,7 +84,7 @@ class RGB2Texture:
     def generate_uv_texture(self):
     
         # paths
-        dataset_image_path = os.path.join(self.dataset_root_path, 'images-stableviton')
+        dataset_image_path = os.path.join(self.dataset_root_path, 'stableviton-created_images')
         dataset_iuv_path = os.path.join(self.dataset_root_path, 'densepose-masked')
         
         # output path for UV textures

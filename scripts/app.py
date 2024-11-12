@@ -1,12 +1,10 @@
 from http.client import HTTPException
-from typing import Union
 
 from fastapi import FastAPI
 
 import subprocess
 
 app = FastAPI()
-
 
 @app.get("/")
 async def read_root():
@@ -29,8 +27,3 @@ async def read_root():
     
     return {"message": "3D try-on script executed"}
     
-
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}

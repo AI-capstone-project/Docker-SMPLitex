@@ -176,5 +176,7 @@ COPY --chown=myuser:myuser scripts/*.sh ./scripts/
 
 WORKDIR /home/myuser/SMPLitex/scripts
 
-RUN mkdir -p ./dummy_data/uv-textures-inpainted/
-RUN mkdir -p ./dummy_data/images-stableviton/
+RUN mkdir -p ./dummy_data/3d_outputs/
+RUN mkdir -p ./dummy_data/stableviton-created_images/
+
+RUN chmod 777 ./dummy_data/3d_outputs/ ./dummy_data/stableviton-created_images/
