@@ -80,7 +80,7 @@ def render_360_gif(
     renders a 360 video in T pose using the texture from current_image_np
     """
 
-    rotation_offset = 10
+    rotation_offset = 60
     images_for_gif = []
 
     for mesh_rot in np.arange(0, 360, rotation_offset):
@@ -95,14 +95,15 @@ def render_360_gif(
             cam_pos=torch.tensor([2.0, 0.35, 0]),  # camera position
             mesh_rot=mesh_rot,  # mesh rotation in Y axis in degrees
         )
-        images_for_gif.append(current_im)
+        for i in range(rotation_offset // 10):
+            images_for_gif.append(current_im)
 
     images_for_gif[0].save(
         output_filename_path,
         save_all=True,
         append_images=images_for_gif[1:],
         optimize=False,
-        duration=40,
+        duration=120,
         loop=0,
     )
 

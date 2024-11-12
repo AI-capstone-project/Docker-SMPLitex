@@ -1,0 +1,18 @@
+services:
+  smplitex:
+    build: .
+    stdin_open: true # docker run -i
+    tty: true # docker run -t
+    develop:
+      watch:
+        - action: sync
+          path: ./scripts
+          target: /home/myuser/SMPLitex/scripts
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  
