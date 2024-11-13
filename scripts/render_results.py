@@ -10,7 +10,7 @@ from utils.smpl_helpers import render_360_gif
 
 class Render360:
 
-    def __init__(self) -> None:
+    def __init__(self, pose_id) -> None:
 
         if torch.cuda.is_available():
             self.device = "cuda"
@@ -26,17 +26,7 @@ class Render360:
 
         self.body_pose = torch.zeros(1,69)
         self.betas = torch.zeros(1,10)
-        self.body_pose[0, 47] = -1.35  # Adjusts arm angle
-        self.body_pose[0, 50] =  1.30  # Adjusts opposite arm angle
-        self.body_pose[0, 4] =  0.10   # Slightly bends knees for a relaxed stance
-        self.body_pose[0, 5] = -0.10   # Balances the knee angle
-        self.body_pose[0, 23] = 0.05   # Slightly twists the torso for balance
-        self.body_pose[0, 26] = -0.05  # Counter-twist for the opposite side
-        self.body_pose[0, 35] = -0.10  # Slightly bends elbows
-        
-        # Optional: Adjust shoulders for natural positioning
-        self.body_pose[0, 44] =  0.05
-        self.body_pose[0, 47] = -0.05
+        self.adjust_body_pose(pose_id)
         self.smpl_output = self.smpl( betas=self.betas,
                             body_pose=self.body_pose,
                             return_verts=True)
@@ -48,7 +38,25 @@ class Render360:
         mesh_filename = os.path.join(__file__,"../../sample-data/smpl_uv_20200910/smpl_uv.obj")
         _, self.faces_verts, aux = load_obj(mesh_filename)
         self.verts_uvs = aux.verts_uvs[None, ...]        # (1, F, 3)
-        self.faces_uvs = self.faces_verts.textures_idx[None, ...]   # (1, F, 3)
+        self.faces_uvs = self.faces_verts.textures_idx[None, ...] 
+
+    def adjust_body_pose(self, pose_id):
+        if pose_id == 1:
+            self.body_pose[0, 47] = -1.35  # Adjusts arm angle
+            self.body_pose[0, 50] =  1.30  # Adjusts opposite arm angle
+            self.body_pose[0, 4] =  0.10   # Slightly bends knees for a relaxed stance
+            self.body_pose[0, 5] = -0.10   # Balances the knee angle
+            self.body_pose[0, 23] = 0.05   # Slightly twists the torso for balance
+            self.body_pose[0, 26] = -0.05  # Counter-twist for the opposite side
+            self.body_pose[0, 35] = -0.10  # Slightly bends elbows
+            self.body_pose[0, 44] =  0.05
+            self.body_pose[0, 47] = -0.05  # (1, F, 3)
+        elif pose_id == 2:
+            self.body_pose[0, 47] = -1.35
+            self.body_pose[0, 50] =  1.30
+        elif pose_id == 3:
+            self.body_pose[0, 47] = -1.35
+            self.body_pose[0, 50] =  1.30
 
     def render_textures(self, textures_folder, output_dir):
 
@@ -76,11 +84,13 @@ class Render360:
 parser = argparse.ArgumentParser(description= 'Renders SMPL 360 gifs given input textures')
 parser.add_argument('--textures', type=str, help='Folder with textures', required=True)
 parser.add_argument('--resultDir', type=str, help='Output folder for 360 gifs', required=True)
+parser.add_argument('--pose_id', type=int, help='Pose ID', required=True)
 
 args = parser.parse_args()
 
 INPUT_FOLDER = args.textures
 OUTPUT_FOLDER = args.resultDir
+POSE_ID = args.pose_id
 
-render = Render360()
+render = Render360(POSE_ID)
 render.render_textures(INPUT_FOLDER, OUTPUT_FOLDER)

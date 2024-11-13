@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Add an ID argument
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <ID>"
+    exit 1
+fi
+
+# Set the ID
+ID=$1
+
 # If a file with the name SMPLitex-v1.0.ckpt is not in 
 # /home/myuser/SMPLitex/scripts/stable-diffusion-webui/stable-diffusion-webui/models/Stable-diffusion/ directory, 
 # then copy the file from /home/myuser/SMPLitex/scripts/stable-diffusion-webui/models/Stable-diffusion/ to 
@@ -33,9 +42,5 @@ conda run -n smplitex python compute_partial_texturemap.py --input_folder ./dumm
 # Run inpaint_with_A1111.py
 echo "Running inpaint_with_A1111.py..."
 conda run -n smplitex python inpaint_with_A1111.py --partial_textures ./dummy_data/uv-textures --masks ./dummy_data/uv-textures-masks --inpainted_textures ./dummy_data/uv-textures-inpainted || { echo "Error running inpaint_with_A1111.py. Exiting."; exit 1; }
-
-# Run render_results.py
-echo "Running render_results.py..."
-conda run -n pytorch3d python render_results.py --textures ./dummy_data/uv-textures-inpainted/ --resultDir ./dummy_data/3d_outputs/ || { echo "Error running render_results.py. Exiting."; exit 1; }
 
 echo "Pipeline completed successfully!"
