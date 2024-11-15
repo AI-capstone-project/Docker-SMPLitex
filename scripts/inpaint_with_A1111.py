@@ -54,7 +54,7 @@ class InpaintWithA1111:
             # inpaints intput image (notice it will generate #batch_size versions)
             inpainted_result = self.sd_api.img2img("a sks texturemap", 
                                     images = [im], 
-                                    batch_size = 8,
+                                    batch_size = 1,
                                     mask_image = im_mask, 
                                     cfg_scale = cfg,
                                     denoising_strength = denoising_strength,
