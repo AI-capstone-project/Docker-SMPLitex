@@ -161,14 +161,15 @@ SHELL ["conda", "run", "-n", "smplitex", "/bin/bash", "-c"]
 RUN pip install -r /home/myuser/requirements.txt
 
 COPY --from=builder --chown=myuser:myuser /home/myuser/SMPLitex /home/myuser/SMPLitex
+
 # Copy sample-data directory into the current directory
 COPY --chown=myuser:myuser sample-data /home/myuser/SMPLitex/sample-data
 
 WORKDIR /home/myuser/SMPLitex/
 
 # Copy the scripts directory into the container at /home/myuser/SMPLitex/scripts
-COPY --chown=myuser:myuser scripts/data_inpainting/ ./scripts/data_inpainting/
-COPY --chown=myuser:myuser scripts/data_train/ ./scripts/data_train/
+# COPY --chown=myuser:myuser scripts/data_inpainting/ ./scripts/data_inpainting/
+# COPY --chown=myuser:myuser scripts/data_train/ ./scripts/data_train/
 COPY --chown=myuser:myuser scripts/dummy_data/ ./scripts/dummy_data/
 COPY --chown=myuser:myuser scripts/utils/ ./scripts/utils/
 COPY --chown=myuser:myuser scripts/*.py ./scripts/
@@ -178,5 +179,7 @@ WORKDIR /home/myuser/SMPLitex/scripts
 
 RUN mkdir -p ./dummy_data/3d_outputs/
 RUN mkdir -p ./dummy_data/stableviton-created_images/
+
+COPY --chown=myuser:myuser scripts/dummy_data/images/MEN-Jackets_Vests-id_00003336-09_1_front.jpg ./dummy_data/stableviton-created_images/
 
 RUN chmod 777 ./dummy_data/3d_outputs/ ./dummy_data/stableviton-created_images/
