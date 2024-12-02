@@ -46,20 +46,6 @@ COPY --chown=myuser:myuser SGHM-ResNet50.pth .
 RUN mkdir -p ./scripts/SemanticGuidedHumanMatting/pretrained && \
     mv ./SGHM-ResNet50.pth ./scripts/SemanticGuidedHumanMatting/pretrained/
 
-# Move split.zip.001, split.zip.002, and split.zip.003 into the current directory
-COPY --chown=myuser:myuser split.zip.001 split.zip.002 split.zip.003 ./
-
-# combine the chunked model weights into one zip file and unzip in the simplitex-trained-model directory
-RUN cat split.zip.001 split.zip.002 split.zip.003 > SMPLitex_weights.zip && \
-    rm split.zip.001 split.zip.002 split.zip.003 && \
-    mkdir -p smplitex-trained-model && \
-    unzip SMPLitex_weights.zip -d ./smplitex-trained-model && \
-    cd ./smplitex-trained-model && \
-    unzip SMPLitex-v1.0.zip && \
-    rm SMPLitex-v1.0.zip && \
-    cd .. && \
-    rm SMPLitex_weights.zip
-
 # Move the SMPLitex-v1.0.ckpt.001, SMPLitex-v1.0.ckpt.002, and SMPLitex-v1.0.ckpt.003 into the current directory
 COPY --chown=myuser:myuser SMPLitex-v1.0.ckpt.001 SMPLitex-v1.0.ckpt.002 SMPLitex-v1.0.ckpt.003 ./
 
@@ -161,14 +147,13 @@ SHELL ["conda", "run", "-n", "smplitex", "/bin/bash", "-c"]
 RUN pip install -r /home/myuser/requirements.txt
 
 COPY --from=builder --chown=myuser:myuser /home/myuser/SMPLitex /home/myuser/SMPLitex
+
 # Copy sample-data directory into the current directory
 COPY --chown=myuser:myuser sample-data /home/myuser/SMPLitex/sample-data
 
 WORKDIR /home/myuser/SMPLitex/
 
 # Copy the scripts directory into the container at /home/myuser/SMPLitex/scripts
-COPY --chown=myuser:myuser scripts/data_inpainting/ ./scripts/data_inpainting/
-COPY --chown=myuser:myuser scripts/data_train/ ./scripts/data_train/
 COPY --chown=myuser:myuser scripts/dummy_data/ ./scripts/dummy_data/
 COPY --chown=myuser:myuser scripts/utils/ ./scripts/utils/
 COPY --chown=myuser:myuser scripts/*.py ./scripts/
@@ -178,5 +163,8 @@ WORKDIR /home/myuser/SMPLitex/scripts
 
 RUN mkdir -p ./dummy_data/3d_outputs/
 RUN mkdir -p ./dummy_data/stableviton-created_images/
+
+# TE Copy the dummy_data/3d_outputs/ directory into the container at /home/myuser/SMPLitex/scripts/dummy_data/3d_outputs
+COPY --chown=myuser:myuser scripts/dummy_data/images/MEN-Jackets_Vests-id_00003336-09_1_front.jpg ./dummy_data/stableviton-created_images/
 
 RUN chmod 777 ./dummy_data/3d_outputs/ ./dummy_data/stableviton-created_images/

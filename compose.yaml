@@ -8,6 +8,9 @@ services:
         - action: sync
           path: ./scripts
           target: /home/myuser/SMPLitex/scripts
+        - action: sync
+          path: ./sample-data
+          target: /home/myuser/SMPLitex/sample-data
     deploy:
       resources:
         reservations:
